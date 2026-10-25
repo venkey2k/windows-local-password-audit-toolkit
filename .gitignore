@@ -1,0 +1,13 @@
+# Credentials and machine-specific security data
+sam_dump.json
+passstore.txt
+*.hive
+*.sam
+
+# Built binary (rebuild from fastcrack.cs)
+fastcrack.exe
+
+# Python
+__pycache__/
+*.pyc
+
