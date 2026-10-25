@@ -20,8 +20,7 @@ passwords against it locally. Nothing is sent anywhere.
 | `collect_blobs.ps1` | Helper used by `dump_sam.ps1`; reads the registry blobs under SYSTEM. |
 | `extract_hash.py` | Derives the boot key, decrypts user hashes and writes a hex NTLM hash store (`passstore.txt`). |
 | `check_password.py` | Tests passwords typed at the prompt (or a `--store`/`--hash`) against the stored hash. |
-| `fastcrack.exe` | Multi-threaded C# cracker (~21M NTLM/s on a modern CPU). |
-| `fastcrack.cs` | Source for the above. |
+| `fastcrack.cs` | C# source for the password-verification utility. The compiled executable is **excluded from the repository** and must be built locally (see below). |
 
 Requirements: Windows 10/11, .NET Framework 4.x, Python 3.9+ (stdlib only), and
 **Administrator** rights for the SAM dump step.
@@ -41,10 +40,11 @@ python .\extract_hash.py --dump sam_dump.json --user USERNAME --store passstore.
 Remove-Item sam_dump.json
 ```
 
-`extract_hash.py` self-test:
+Both Python tools ship with self-tests that run offline and need no real hash:
 
 ```powershell
-python .\extract_hash.py --selftest
+python .\extract_hash.py --selftest    # boot-key + DES/AES fixture
+python .\check_password.py --selftest  # MD4("password") known-answer test
 ```
 
 ---
@@ -80,6 +80,11 @@ fastcrack.exe <32-hex NTLM hash> <mode> [args]
 
 It prints `done <mode> <count> sec <s>` on completion and exits non-zero on a match,
 printing the recovered password.
+
+Indicative throughput, measured on a multi-core desktop CPU (candidate generation and
+hashing included): roughly **9-10M/s on `sweep`** and **2-3M/s on `hybrid`**; `dict` is
+usually limited by disk I/O. Throughput depends on mode, candidate length and storage
+speed — run a small benchmark of your own rather than treating these as guarantees.
 
 Rebuild after editing the source:
 

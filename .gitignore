@@ -1,13 +1,22 @@
 # Credentials and machine-specific security data
 sam_dump.json
 passstore.txt
+found.txt
 *.hive
 *.sam
+
+# Generated results and local wordlists
+words.txt
+wordlist.txt
+wordlists/
+rockyou.txt
 
 # Built binary (rebuild from fastcrack.cs)
 fastcrack.exe
 
+# Logs
+*.log
+
 # Python
 __pycache__/
 *.pyc
-
